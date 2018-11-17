@@ -29,7 +29,7 @@ public class WeaponBase : MonoBehaviour
 
     protected AudioSource audiosource;
     public bool fireLock;
-    protected bool canShoot;
+    public bool canShoot;
     public bool Shoot = false;
     public bool isReloading = false;
     [Header("Sonidos")]
@@ -67,12 +67,14 @@ public class WeaponBase : MonoBehaviour
     public float spreatBase = 0f;
     [HideInInspector]
     public float spreat = 0.1f;
+    //[HideInInspector]
+    public bool Pointing;
     public float recoil = 1f;
     //   public float BulletAmountPenetration; 
     public float Distance;
 
-    public float penetration;
-    public float minpenetration;
+    //public float penetration;
+    //public float minpenetration;
     public int clipSize = 12;
     //  [HideInInspector] 
     public int bulletsLeft;
@@ -115,7 +117,15 @@ public class WeaponBase : MonoBehaviour
             //Debug.Log("PressR"); 
             ChekReload();
         }
+        if (Input.GetMouseButtonDown(1))
+        {
+
+
+            //mirageState = (mirageState>2)?0: mirageState++;
+            CheckApuntar();
+        }
     }
+  protected  virtual void CheckApuntar() { }
     void checkFire()
     {
         if (isReloading) return;
@@ -309,6 +319,7 @@ public class WeaponBase : MonoBehaviour
     public virtual void OnMagIn()
     {
         ReloadAmmo();
+        Debug.Log("hola");
         audiosource.PlayOneShot(MagInSound);
     }
     public virtual void OnBoltForwarded()
@@ -364,7 +375,7 @@ public class WeaponBase : MonoBehaviour
 
         }
     }
-    private void AsingConfigurations()
+    public void AsingConfigurations()
     {
         SpraySystem.penalizationCrounch = SprayConf.PenalizationCrounch;
         SpraySystem.penalizationGrounded = SprayConf.PenalizationGrounded;
@@ -374,5 +385,13 @@ public class WeaponBase : MonoBehaviour
         RecoilAfect.enfriamiento = SprayConf.Enfriamiento;
         SprayShoot = SprayConf.SprayShoot;
         spreatBase = SprayConf.SprayBase;
+        SpraySystem.PenalizationSniper = SprayConf.Sniper;
+    }
+    /// <summary>
+    /// No Animation Connecting
+    /// </summary>
+    public virtual void OnSwich(){
+        //Debug.Log("Cambio de Arma My name is:" +name);
+       // AsingConfigurations();
     }
 }

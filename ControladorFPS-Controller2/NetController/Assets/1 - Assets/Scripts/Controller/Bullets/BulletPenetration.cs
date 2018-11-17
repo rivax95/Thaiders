@@ -179,7 +179,7 @@ public class BulletPenetration : MonoBehaviour
             if (WallBang[i].gameObject.transform.GetComponent<Collider>().CompareTag("Enemy") && !Players.Contains(WallBang[i].transform.root.gameObject) && dañofinal > 0)
             {
                 //Debug.Log("EsEnemigo"); 
-                Players.Add(entries[i].transform.root.gameObject);
+                Players.Add(WallBang[i].transform.root.gameObject);
                 WallBang[i].gameObject.transform.GetComponent<HitInfoSite>().Damage(dañofinal);
             }
             //Debug.Log(calculateRes+" "+ dañofinal +" "+WallBang.Count +" "+Distancias.Count); 

@@ -25,6 +25,7 @@ public class Health : MonoBehaviour {
     public static Health Instance;
     public Collider[] Ragdol;
     public Collider[] LiveColiders;
+   public bool islocal = false;
     public void Start()
     {
         control = this.gameObject.GetComponent<Controller>();
@@ -59,6 +60,7 @@ public class Health : MonoBehaviour {
         {
             Ragdol[i].enabled = true;
         }
+        WeaponManager.instance.WeaponbaseCurrent.OnSwich();
         WeaponManager.instance.dropIstantiate(WeaponManager.instance.WeaponbaseCurrent.gameObject);
         foreach (Transform item in WeaponFather.transform)
         {
@@ -67,10 +69,14 @@ public class Health : MonoBehaviour {
         value = 100f;
         this.gameObject.GetComponent<Animator>().enabled = false;
     //    this.gameObject.GetComponent<Controller>().enabled = false;
-        this.gameObject.GetComponent<MauseLook>().enabled = false;
-        this.gameObject.transform.Find("Recoil").gameObject.SetActive(false);
-        this.gameObject.GetComponent<CharacterController>().enabled = false;
-        camera.SetActive(true);
+        if (islocal)
+        {
+            this.gameObject.GetComponent<MauseLook>().enabled = false;
+            this.gameObject.transform.Find("Recoil").gameObject.SetActive(false);
+            this.gameObject.GetComponent<CharacterController>().enabled = false;
+            camera.SetActive(true);
+        }
+     
     }
     public void revive(Transform Respawn)
     {
@@ -78,11 +84,14 @@ public class Health : MonoBehaviour {
         {
            LiveColiders[i].enabled = true;
         }
+   
         this.gameObject.GetComponent<Animator>().enabled = true;
        // this.gameObject.GetComponent<Controller>().enabled = true;
+        if (islocal){
         this.gameObject.GetComponent<MauseLook>().enabled = true;
         this.gameObject.transform.Find("Recoil").gameObject.SetActive(true);
         this.gameObject.GetComponent<CharacterController>().enabled = true;
+    }
         camera.SetActive(false);
 
         GameObject DeffectWeapn= Instantiate(DeffectWeapon, WeaponFather.transform);

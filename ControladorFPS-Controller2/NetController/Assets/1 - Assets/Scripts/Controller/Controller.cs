@@ -197,7 +197,7 @@ namespace Alex.Controller
                     nextTimeToFire = Time.time + fireRate;
                     playerAnimations.IsShotting(true);
 
-                    Debug.Log("Disparo desde el controller");
+                    //Debug.Log("Disparo desde el controller");
                  //   currentWeapon.Shoot();
                   //  currentHandWeapon.ShootMet();
                 }

@@ -16,6 +16,7 @@ namespace Alex.MouseLook
     public class MauseLook : MonoBehaviour
     {
         #region variablesPublicas
+        
         public enum RotationAxes
         {
             MouseX, MoueseY
@@ -23,10 +24,12 @@ namespace Alex.MouseLook
         public RotationAxes axes = RotationAxes.MoueseY;
         #endregion
         #region VariablesPublicas
-        private float currentSensivity_X = 1.5f;
-        private float currentSensivity_Y = 1.5f;
-        private float sensivity_X = 1.5f;
-        private float sensivity_Y = 1.5f;
+        public float currentSensivity_X = 1.5f;
+        public float currentSensivity_Y = 1.5f;
+        public float StandarSensi_x = 1.5f;
+        public float StandarSensi_y = 1.5f;
+        public float sensivity_X = 1.5f;
+        public float sensivity_Y = 1.5f;
         public float rotation_X, rotation_Y;
        
         private float minimum_X = -360f;

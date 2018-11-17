@@ -16,8 +16,8 @@ public enum Weapon{
     Police9mm,
 
     UMP45,
-    DefenderShotgun
-
+    DefenderShotgun,
+    Snipper
 }
 public enum Grenades {Bang,Flash,Toxic }
 public class WeaponManager : MonoBehaviour {
@@ -25,7 +25,7 @@ public class WeaponManager : MonoBehaviour {
     public static WeaponManager instance;
     public Weapon currentWeapon = Weapon.Police9mm;
     public int CurrenWeaponIndex=0;
-    private Weapon[] weapons = { Weapon.Police9mm, Weapon.UMP45,Weapon.DefenderShotgun };
+    private Weapon[] weapons = { Weapon.Police9mm, Weapon.UMP45,Weapon.DefenderShotgun,Weapon.Snipper };
   //  [HideInInspector]
     public WeaponBase WeaponbaseCurrent;
     public List <WeaponBase> WeaponsInInventory;
@@ -92,6 +92,8 @@ public class WeaponManager : MonoBehaviour {
         {
             Debug.Log("Cambio");
             isWeapon = (isWeapon) ? false : true;
+            //TODOOOOOOOOOOOOOOOOOOO
+            //2WeaponbaseCurrent.OnSwich();
         }
     }
     void SwitchToCurrentWeapon() // Conectar con el controller //Conectado por otro lado
@@ -104,14 +106,17 @@ public class WeaponManager : MonoBehaviour {
             WeaponsInInventory[i].fireLock = false;
         }
         //transform.Find(weapons[CurrenWeaponIndex].ToString()).gameObject.SetActive(true);
+        WeaponbaseCurrent.OnSwich();
         WeaponsInInventory[CurrenWeaponIndex].gameObject.SetActive(true);
         WeaponbaseCurrent = WeaponsInInventory[CurrenWeaponIndex].gameObject.GetComponent<WeaponBase>();
+        WeaponbaseCurrent.AsingConfigurations();
         Switch = false;
     }
     void CheckWeaponSwitch()
     {
         float mousewheel = Input.GetAxis("Mouse ScrollWheel");
         if (WeaponsInInventory.Count < 2) return;
+      
         if (mousewheel > 0)
         {
             SelectPreviousWeapon();
@@ -184,6 +189,10 @@ public class WeaponManager : MonoBehaviour {
                 cube.AddComponent<Escopeta>().enabled = false;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<Escopeta>());
                 break;
+            case Weapon.Snipper:
+                cube.AddComponent<Sniper>().enabled = false;
+                Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<Sniper>());
+                break;
         }
 
         //añadimos RB
@@ -193,8 +202,8 @@ public class WeaponManager : MonoBehaviour {
     }
     void Copia(WeaponBase orig,WeaponBase copia)
     {
-        copia.penetration = orig.penetration;
-        copia.minpenetration = orig.minpenetration;
+        //copia.penetration = orig.penetration;
+        //copia.minpenetration = orig.minpenetration;
         copia.clipSize = orig.clipSize;
         copia.bulletsLeft = orig.bulletsLeft;
         copia.maxAmmo = orig.maxAmmo;

@@ -20,6 +20,8 @@ public class SpreadConfiguration : ScriptableObject
     public float SprayShoot;
     [Range(0.3f, 0.89f)]
     public float SprayBase;
+    [Range(0.1f, 0.45f)]
+    public float Sniper;
 
 }
  
