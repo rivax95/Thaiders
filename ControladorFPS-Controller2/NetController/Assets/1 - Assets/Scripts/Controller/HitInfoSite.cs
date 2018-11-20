@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HitInfoSite : MonoBehaviour,IDamageable<float> {
+public class HitInfoSite : MonoBehaviour,IDamageable<float,string,string,int> {
     public enum Part
     {
         Cabeza,Hombro,Brazo,Mano,TroncoInferior,Pecho,Pierna,Pie
 }
+   
     Health SettingsHealth;
     public float value;
     public Part Site;
+   
 	// Use this for initialization
 	void Start () {
+        //GUI = Resources.Load("KillLog") as GameObject;
         SettingsHealth = transform.root.GetComponent<Health>();
         switch (Site)
         {
@@ -47,10 +50,15 @@ public class HitInfoSite : MonoBehaviour,IDamageable<float> {
 		
 	}
 
-    public void Damage(float damageTaken)
+    public void Damage(float damageTaken,string Name,string gunName,int Wall)
     {
         SettingsHealth.value-= damageTaken * value;
         Debug.Log("Daño recibido= " + damageTaken * value +"TOTAAAAAAAAAAAL");
+
+        if(SettingsHealth.value < 0){
+            Debug.Log(Name + " Con " + gunName + " " + Wall + "ah " + "PlayerNames" + " en " + Site.ToString());
+            CanvasManager.instance.Kill(Name, transform.root.GetComponent<PlayerInfo>().NombreJugador, gunName, Site.ToString(), Wall);
+        }
     }
 }
 

@@ -121,7 +121,6 @@ public class WeaponBase : MonoBehaviour
         {
 
 
-            //mirageState = (mirageState>2)?0: mirageState++;
             CheckApuntar();
         }
     }
@@ -235,7 +234,7 @@ public class WeaponBase : MonoBehaviour
             Vector3 direct = CrearSpread(spreat, ShootPoint.transform);
             //  balaPen.Raycasting(1200, ShootPoint.transform.position, direct, ShootRayLayer); 
             balaPen.BidirectionalRaycastNonAlloc(ShootPoint.transform.position, 0.1f, direct, Distance, ShootRayLayer, balaPen.entries, balaPen.exits, balaPen.intersections, "Enemy", MarkedShoots);
-            balaPen.AplicarDaño(Resistencia, damage, ShootPoint.transform.position);
+            balaPen.AplicarDaño(Resistencia, damage, ShootPoint.transform.position,"Player",Name);
             //Debug.Log("Disparo el hit: "+balaPen.intersections.Count); 
 
         }
@@ -265,7 +264,7 @@ public class WeaponBase : MonoBehaviour
 
         StartCoroutine(CoResetFireLook());
     }
-    void DRYFIRE()
+   public virtual void DRYFIRE()
     {
         audiosource.PlayOneShot(DryFire);
         fireLock = true;
@@ -273,7 +272,7 @@ public class WeaponBase : MonoBehaviour
         // animator.CrossFadeInFixedTime("Fire", 0.1f); 
         StartCoroutine(CoResetFireLook());
     }
-    IEnumerator CoResetFireLook()
+   public virtual  IEnumerator CoResetFireLook()
     {
         yield return new WaitForSeconds(fireRate);
         Shoot = false;

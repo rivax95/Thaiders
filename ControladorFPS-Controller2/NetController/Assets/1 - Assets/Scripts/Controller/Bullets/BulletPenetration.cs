@@ -144,7 +144,7 @@ public class BulletPenetration : MonoBehaviour
 
         // Debug.Log( Vector3.Distance( hits[1].point,hits[2].point)); 
     }
-    public void AplicarDaño(float Resistencia, float daño, Vector3 origin)
+    public void AplicarDaño(float Resistencia, float daño, Vector3 origin,string PlayerName,string gun)
     {
         entries = entries.OrderBy(o => Vector3.Distance(o.point, origin)).ToArray<RaycastHit>();
         exits = exits.OrderBy(o => Vector3.Distance(o.point, origin)).ToArray<RaycastHit>();
@@ -180,10 +180,26 @@ public class BulletPenetration : MonoBehaviour
             {
                 //Debug.Log("EsEnemigo"); 
                 Players.Add(WallBang[i].transform.root.gameObject);
-                WallBang[i].gameObject.transform.GetComponent<HitInfoSite>().Damage(dañofinal);
+                WallBang[i].gameObject.transform.GetComponent<HitInfoSite>().Damage(dañofinal,PlayerName,gun,i);
+
+                marcador = Resources.Load("Marcador") as GameObject;
+                GameObject marca = Instantiate(marcador);
+                marca.GetComponent<MeshRenderer>().material.color = Color.blue;
+                marca.transform.position = entries[i].point;
+                marca.transform.localScale = new Vector3(0.09f, 0.09f, 0.09f);
+                Destroy(marca, 8f);
             }
             //Debug.Log(calculateRes+" "+ dañofinal +" "+WallBang.Count +" "+Distancias.Count); 
             //Debug.Log(i + "Daño final :"+dañofinal); 
+            if(calculateRes > 0 && !Players.Contains(WallBang[i].transform.root.gameObject))
+            {
+                marcador = Resources.Load("Marcador") as GameObject;
+                GameObject marca = Instantiate(marcador);
+                marca.GetComponent<MeshRenderer>().material.color = Color.red;
+                marca.transform.position = entries[i].point;
+                marca.transform.localScale = new Vector3(0.09f, 0.09f, 0.09f);
+                Destroy(marca, 8f);
+            }
         }
         Players.Clear();
     }
@@ -217,20 +233,6 @@ public class BulletPenetration : MonoBehaviour
         Debug.Log("velocidad");
         return velocdiad;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     #region 2ºIteracion //Descartada por alto consumo y baja eficiencia 

@@ -28,6 +28,12 @@ public class Sniper : WeaponBase
             item.sensivity_Y= valuey;
         }
     }
+    public override void DRYFIRE()
+    {
+        base.DRYFIRE();
+        OnFire();
+        Puedoapuntar = true;
+    }
     public void apuntar()
     {
         switch (mirageState)
