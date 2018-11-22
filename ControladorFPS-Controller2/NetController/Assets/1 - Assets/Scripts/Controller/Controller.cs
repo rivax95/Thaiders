@@ -260,7 +260,7 @@ namespace Alex.Controller
                 {
                     inputX_Set = 0f;
                     inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.05f);
-                    inputX = Mathf.Lerp(inputX, inputX_Set, Time.deltaTime * 19f);
+                    inputX = Mathf.SmoothDamp(inputX, inputX_Set, ref velocity, 0.05f);
                 }
                 
                

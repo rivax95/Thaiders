@@ -27,7 +27,7 @@ public class CanvasManager : MonoBehaviour {
     public void CanvasRadarUpdate()
     {
         CanvasRadar.localEulerAngles=(new Vector3(0,0,player.localEulerAngles.y*-1));
-        Debug.Log(player.localEulerAngles.y);
+        ////Debug.Log(player.localEulerAngles.y);
     }
     public void Kill(string nombre,string nombre2,string gun,string site,int wall)
     {

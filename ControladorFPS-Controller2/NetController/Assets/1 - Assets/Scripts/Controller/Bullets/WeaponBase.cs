@@ -81,6 +81,8 @@ public class WeaponBase : MonoBehaviour
     public int maxAmmo = 100;
     public Animator Playeranim;
     public GameObject ShootPoint;
+    public GameObject Model;
+    public Sprite DropedImg;
     [HideInInspector]
     public int type;
     void Awake()

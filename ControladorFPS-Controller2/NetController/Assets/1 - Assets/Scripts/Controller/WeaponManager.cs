@@ -34,6 +34,7 @@ public class WeaponManager : MonoBehaviour {
     public bool isWeapon = true;
     [HideInInspector]
     public bool Switch=false;
+    public GameObject dropPoint;
     void Awake()
     {
         if (instance == null)
@@ -66,6 +67,7 @@ public class WeaponManager : MonoBehaviour {
         SwitchModeWeapon();
         if (isWeapon)
         {
+
             CheckWeaponSwitch();
             if (Input.GetButtonDown("DropWeapon"))
             {
@@ -80,8 +82,7 @@ public class WeaponManager : MonoBehaviour {
     void CheckDrop()
     {
         if (WeaponbaseCurrent.isPistol) return;
-        int i=WeaponsInInventory.IndexOf(WeaponbaseCurrent);
-        WeaponsInInventory.RemoveAt(i);
+        
         dropWeapon(WeaponbaseCurrent);
      //   ActualizarInventario();
         selecNextWeapon();
@@ -159,7 +160,8 @@ public class WeaponManager : MonoBehaviour {
     }
     void dropWeapon(WeaponBase current)
     {
-        
+        int i = WeaponsInInventory.IndexOf(WeaponbaseCurrent);
+        WeaponsInInventory.RemoveAt(i);
         
         dropIstantiate(current.gameObject);
         Destroy(current.gameObject);
@@ -168,10 +170,16 @@ public class WeaponManager : MonoBehaviour {
 
   public  void dropIstantiate(GameObject current)
     {
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.position = this.transform.position;
-     
-        cube.transform.localScale = new Vector3(0.1f, 0.2f, 0.1f);
+        GameObject cube = Instantiate(current.GetComponent<WeaponBase>().Model);
+
+        cube.transform.position = new Vector3(dropPoint.transform.position.x, dropPoint.transform.position.y, dropPoint.transform.position.z+0.2f);
+        //cube.transform.position = new Vector3(dropPoint.transform.position.x,dropPoint.transform.position.y,transform.position.z*-1);
+        Rigidbody rig = cube.GetComponent<Rigidbody>();
+        rig.mass = 2f;
+        rig.drag = 2f;
+        rig.AddForce(dropPoint.transform.forward*15, ForceMode.Impulse);
+        cube.transform.Find("Canvas").gameObject.AddComponent<DropedGun>();
+        //cube.transform.localScale = new Vector3(0.1f, 0.2f, 0.1f);
         // copiamos valores 
        
         switch (weapons[CurrenWeaponIndex])
