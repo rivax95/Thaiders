@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Alex.Controller;
+using System.Linq;
 
 public enum Weapon{
 
@@ -35,6 +36,8 @@ public class WeaponManager : MonoBehaviour {
     [HideInInspector]
     public bool Switch=false;
     public GameObject dropPoint;
+    public GameObject GetGunOBJ;
+    public List<GameObject> Guns;
     void Awake()
     {
         if (instance == null)
@@ -78,6 +81,35 @@ public class WeaponManager : MonoBehaviour {
         {
 
         }
+        if (GetGunOBJ)
+        {
+            CheckGetGun(GetGunOBJ);
+        }
+    }
+   public void CheckGetGun (GameObject gun)
+    {
+        if(Vector3.Distance(transform.root.position,gun.transform.position) > 1.3f){
+            return;
+        }
+        GetGun(gun);
+    }
+    public void GetGun(GameObject gun)
+    {
+        if (Input.GetKey(KeyCode.E))
+        {
+            Debug.Log("furula");
+            foreach (var item in Guns)
+            {
+                if(item.GetComponent<WeaponBase>().Name == gun.GetComponent<WeaponBase>().Name)
+                {
+                   GameObject obj= Instantiate(item, this.transform);
+                    Copia(obj.GetComponent<WeaponBase>(), gun.GetComponent<WeaponBase>());
+                    Destroy(gun); //Destuir en networking sin mas
+                    break;
+                }
+            }
+        }
+
     }
     void CheckDrop()
     {
@@ -212,6 +244,7 @@ public class WeaponManager : MonoBehaviour {
     {
         //copia.penetration = orig.penetration;
         //copia.minpenetration = orig.minpenetration;
+        copia.Name = orig.Name;
         copia.clipSize = orig.clipSize;
         copia.bulletsLeft = orig.bulletsLeft;
         copia.maxAmmo = orig.maxAmmo;

@@ -1955,6 +1955,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireLock: 0
+  canShoot: 0
   Shoot: 0
   isReloading: 0
   Fire: {fileID: 8300000, guid: 4ba9bafda0e84cf4e8e2012ae9a60e56, type: 3}
@@ -1968,7 +1969,7 @@ MonoBehaviour:
   muzzleFlash: {fileID: 198980956208971268}
   bloodFX: {fileID: 198000011254678926, guid: abb9f519b142e304d9c45b56afa768bc, type: 2}
   SprayConf: {fileID: 0}
-  Name: 
+  Name: Police9mm
   BulletsPerShoot: 0
   isPistol: 1
   MarkedShoots: 0
@@ -1984,15 +1985,16 @@ MonoBehaviour:
   bulletsInClip: 12
   spreatBase: 0
   spreat: 0.1
+  Pointing: 0
   recoil: 2
   Distance: 0
-  penetration: 20
-  minpenetration: 5
   clipSize: 12
   bulletsLeft: 100
   maxAmmo: 100
   Playeranim: {fileID: 0}
   ShootPoint: {fileID: 0}
+  Model: {fileID: 0}
+  DropedImg: {fileID: 0}
   type: 0
 --- !u!114 &114269212297238618
 MonoBehaviour:

@@ -233,13 +233,13 @@ namespace Alex.Controller
                         WalkForward = false;
                         inputY_Set = -1f;
                     }
-                    inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.05f);
+                    //inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.05f);
                     //inputX = Mathf.Lerp(inputX, inputX_Set, Time.deltaTime * 19f);
                 }
                 else
                 {
                     inputY_Set = 0f;
-                    inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.05f);
+                    //inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.05f);
                 }
 
                 if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
@@ -253,21 +253,22 @@ namespace Alex.Controller
                     {
                         inputX_Set = 1f;
                     }
-                    inputX = Mathf.SmoothDamp(inputX, inputX_Set, ref velocity, 0.05f);
+                    //inputX = Mathf.SmoothDamp(inputX, inputX_Set, ref velocity, 0.05f);
 
                 }
                 else
                 {
                     inputX_Set = 0f;
-                    inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.05f);
-                    inputX = Mathf.SmoothDamp(inputX, inputX_Set, ref velocity, 0.05f);
+                    //inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.05f);
+                    //inputX = Mathf.SmoothDamp(inputX, inputX_Set, ref velocity, 0.05f);
                 }
-                
-               
+
+                //inputY = Mathf.SmoothDamp(inputY, inputY_Set, ref velocity, 0.02f);
+                //inputX = Mathf.SmoothDamp(inputX, inputX_Set, ref velocity, 0f);
                 //inputY = Mathf.Lerp(inputY, inputY_Set, Time.deltaTime * 19f);
                 //inputX = Mathf.Lerp(inputX, inputX_Set, Time.deltaTime * 19f);
-               
-               
+                inputY = Mathf.SmoothStep(inputY, inputY_Set, Time.deltaTime * 19f);
+                inputX = Mathf.SmoothStep(inputX, inputX_Set, Time.deltaTime * 19f);
                 if (inputY < -0.5f) inputY = -0.5f; //Note TEST
                 if (inputX < -0.5f) inputX = -0.5f;//Note TEST
                 if (inputX > 0.5f) inputX = 0.5f;//Note TEST
