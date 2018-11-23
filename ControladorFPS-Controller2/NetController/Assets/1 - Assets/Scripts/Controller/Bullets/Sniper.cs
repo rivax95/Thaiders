@@ -10,7 +10,15 @@ public class Sniper : WeaponBase
     public Camera CamaraSnip;
     public Camera Guncamera;
     public MauseLook[] Sensi;
-
+    public override void Start()
+    {
+        base.Start();
+        PointOfView = GameObject.Find("CanvasAssitantGuns").transform.Find("Sniper").Find("Point").gameObject;
+        CamaraSnip = transform.parent.parent.parent.GetComponent<Camera>();
+        Guncamera = transform.parent.parent.GetComponent<Camera>();
+        Sensi[0] = transform.root.GetComponent<MauseLook>();
+        Sensi[1] = CamaraSnip.transform.GetComponent<MauseLook>();
+    }
     protected override void CheckApuntar()
 {
         if (isReloading) { return; }

@@ -12,6 +12,10 @@ using UnityEngine;
 using Alex.Controller;
 using System.Linq;
 
+public enum ObjectInHands
+{
+    fire,grenade,mele
+}
 public enum Weapon{
 
     Police9mm,
@@ -20,10 +24,12 @@ public enum Weapon{
     DefenderShotgun,
     Snipper
 }
+public enum Mele { }
 public enum Grenades {Bang,Flash,Toxic }
 public class WeaponManager : MonoBehaviour {
    
     public static WeaponManager instance;
+    public ObjectInHands Hands = ObjectInHands.fire;
     public Weapon currentWeapon = Weapon.Police9mm;
     public int CurrenWeaponIndex=0;
     private Weapon[] weapons = { Weapon.Police9mm, Weapon.UMP45,Weapon.DefenderShotgun,Weapon.Snipper };
@@ -32,7 +38,6 @@ public class WeaponManager : MonoBehaviour {
     public List <WeaponBase> WeaponsInInventory;
     [HideInInspector]
     public GrenadeBase GrenadesAvailables;
-    public bool isWeapon = true;
     [HideInInspector]
     public bool Switch=false;
     public GameObject dropPoint;
@@ -51,8 +56,8 @@ public class WeaponManager : MonoBehaviour {
     }
     void Start()
     {
-        transform.Find(weapons[CurrenWeaponIndex].ToString()).gameObject.SetActive(true);
-        WeaponbaseCurrent= transform.Find(weapons[CurrenWeaponIndex].ToString()).GetComponent<WeaponBase>();
+        transform.Find("FireWeapon").Find(weapons[CurrenWeaponIndex].ToString()).gameObject.SetActive(true);
+        WeaponbaseCurrent= transform.Find("FireWeapon").Find(weapons[CurrenWeaponIndex].ToString()).GetComponent<WeaponBase>();
         ActualizarInventario();
 
         foreach (WeaponBase item in WeaponsInInventory)
@@ -67,32 +72,62 @@ public class WeaponManager : MonoBehaviour {
     }
     void Update()
     {
-        SwitchModeWeapon();
-        if (isWeapon)
+        if (Input.GetKey(KeyCode.Alpha1))
         {
-
+            ActualizarInventario();
+        }
+        SwitchModeWeapon();
+      
             CheckWeaponSwitch();
             if (Input.GetButtonDown("DropWeapon"))
             {
                 CheckDrop();
             }
-        }
-        else // isGrenade
-        {
-
-        }
+        
+       
         if (GetGunOBJ)
         {
             CheckGetGun(GetGunOBJ);
         }
     }
+    public void OnSwichHandWeapon(ObjectInHands type)
+    {
+        GameObject fire = transform.Find("FireWeapon").gameObject, grenade = transform.Find("GrenadeWeapon").gameObject, mele = transform.Find("MeleWeapon").gameObject;
+        WeaponbaseCurrent.OnSwich();
+        fire.SetActive(false); grenade.SetActive(false); mele.SetActive(false);
+        switch (type)
+        {
+            case ObjectInHands.fire:
+                fire.SetActive(true);
+                ActualizarInventario();
+                break;
+            case ObjectInHands.grenade:
+                grenade.SetActive(true);
+                break;
+            case ObjectInHands.mele:
+                mele.SetActive(true);
+                break;
+            default:
+                break;
+        }
+    }
    public void CheckGetGun (GameObject gun)
     {
-        if(Vector3.Distance(transform.root.position,gun.transform.position) > 1.3f){
-            return;
-        }
+        
         GetGun(gun);
     }
+   public WeaponBase buscarArmaFuego(string name)
+   {
+       foreach (var item in WeaponsInInventory)
+       {
+           if (item.Name == name)
+           {
+               return item;
+           }
+       }
+       return null;
+   }
+    
     public void GetGun(GameObject gun)
     {
         if (Input.GetKey(KeyCode.E))
@@ -102,9 +137,20 @@ public class WeaponManager : MonoBehaviour {
             {
                 if(item.GetComponent<WeaponBase>().Name == gun.GetComponent<WeaponBase>().Name)
                 {
-                   GameObject obj= Instantiate(item, this.transform);
-                    Copia(obj.GetComponent<WeaponBase>(), gun.GetComponent<WeaponBase>());
-                    Destroy(gun); //Destuir en networking sin mas
+                   GameObject obj= Instantiate(item, this.transform.Find("FireWeapon").transform);
+                    Copia( gun.GetComponent<WeaponBase>(),obj.GetComponent<WeaponBase>());
+                 
+                  //Destuir en networking sin mas
+                    if (buscarArmaFuego(gun.GetComponent<WeaponBase>().Name))
+                    {
+                        WeaponBase droped= buscarArmaFuego(gun.GetComponent<WeaponBase>().Name); //buscar esto en la lista
+
+                        ChangeGunPerIndex(WeaponsInInventory.IndexOf(droped)); //pasarle el indice de la de arriba
+                        dropWeapon(WeaponbaseCurrent);
+                    }
+                      Destroy(gun);
+                      ActualizarInventario();
+                      ChangeGunPerIndex(WeaponsInInventory.Count-1);
                     break;
                 }
             }
@@ -113,25 +159,34 @@ public class WeaponManager : MonoBehaviour {
     }
     void CheckDrop()
     {
-        if (WeaponbaseCurrent.isPistol) return;
-        
+        if (Hands != ObjectInHands.fire) return;
+        WeaponbaseCurrent.OnSwich();
         dropWeapon(WeaponbaseCurrent);
-     //   ActualizarInventario();
+     
         selecNextWeapon();
+        
     }
     void SwitchModeWeapon()
     {
-        if (Input.GetMouseButton(2))
+        if (Input.GetMouseButtonDown(2))
         {
             Debug.Log("Cambio");
-            isWeapon = (isWeapon) ? false : true;
+            Hands = (Hands==ObjectInHands.grenade) ? ObjectInHands.fire : ObjectInHands.grenade;
+            OnSwichHandWeapon(Hands);
             //TODOOOOOOOOOOOOOOOOOOO
             //2WeaponbaseCurrent.OnSwich();
         }
+        if (Input.GetKey(KeyCode.V))
+        {
+            Hands = ObjectInHands.mele;
+            OnSwichHandWeapon(Hands);
+        }
+       
     }
     void SwitchToCurrentWeapon() // Conectar con el controller //Conectado por otro lado
     {
-        
+        Hands = ObjectInHands.fire;
+        OnSwichHandWeapon(Hands);
         for (int i = 0; i < WeaponsInInventory.Count ; i++)
         {
             WeaponsInInventory[i].gameObject.SetActive(false);
@@ -148,6 +203,8 @@ public class WeaponManager : MonoBehaviour {
     void CheckWeaponSwitch()
     {
         float mousewheel = Input.GetAxis("Mouse ScrollWheel");
+        if (WeaponbaseCurrent.fireLock) return;
+        if (Hands == ObjectInHands.grenade) return;
         if (WeaponsInInventory.Count < 2) return;
       
         if (mousewheel > 0)
@@ -158,6 +215,7 @@ public class WeaponManager : MonoBehaviour {
         {
             selecNextWeapon();
         }
+        
         Switch = true;
     }
 
@@ -193,11 +251,25 @@ public class WeaponManager : MonoBehaviour {
     void dropWeapon(WeaponBase current)
     {
         int i = WeaponsInInventory.IndexOf(WeaponbaseCurrent);
-        WeaponsInInventory.RemoveAt(i);
         
         dropIstantiate(current.gameObject);
+        WeaponsInInventory.RemoveAt(i);
         Destroy(current.gameObject);
-       
+        StartCoroutine(actuTemp());
+    }
+    void ChangeGunPerIndex(int index)
+    {
+        WeaponbaseCurrent.OnSwich();
+        if(index <= WeaponsInInventory.Count)
+        {
+
+            foreach (WeaponBase item in WeaponsInInventory)
+            {
+                item.gameObject.SetActive(false);
+            }
+            CurrenWeaponIndex = index;
+           WeaponsInInventory[CurrenWeaponIndex].gameObject.SetActive(true);
+        }
     }
 
   public  void dropIstantiate(GameObject current)
@@ -214,24 +286,28 @@ public class WeaponManager : MonoBehaviour {
         //cube.transform.localScale = new Vector3(0.1f, 0.2f, 0.1f);
         // copiamos valores 
        
-        switch (weapons[CurrenWeaponIndex])
+        switch (current.GetComponent<WeaponBase>().Name)
         {
-            case Weapon.Police9mm:
+            case "Police9mm":
                 cube.AddComponent<WeaponBase>().enabled = false; ;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<WeaponBase>());
                 break;
-            case Weapon.UMP45:
+            case "UMP45":
                 cube.AddComponent<SlideStopWeapon>().enabled = false; ;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<SlideStopWeapon>());
                 
                 break;
-            case Weapon.DefenderShotgun:
+            case "DefenderShotgun":
                 cube.AddComponent<Escopeta>().enabled = false;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<Escopeta>());
                 break;
-            case Weapon.Snipper:
+            case "Sniper":
                 cube.AddComponent<Sniper>().enabled = false;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<Sniper>());
+                break;
+            default:
+                 cube.AddComponent<WeaponBase>().enabled = false; ;
+                Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<WeaponBase>());
                 break;
         }
 
@@ -244,9 +320,16 @@ public class WeaponManager : MonoBehaviour {
     {
         //copia.penetration = orig.penetration;
         //copia.minpenetration = orig.minpenetration;
+        copia.RecoilAfect = orig.RecoilAfect;
+        copia.SpraySystem = orig.SpraySystem;
+        copia.Playeranim = orig.Playeranim;
+        copia.ShootPoint = orig.ShootPoint;
+        copia.DropedImg = orig.DropedImg;
+        copia.Model =orig.Model;
         copia.Name = orig.Name;
         copia.clipSize = orig.clipSize;
         copia.bulletsLeft = orig.bulletsLeft;
+        copia.bulletsInClip = orig.bulletsInClip;
         copia.maxAmmo = orig.maxAmmo;
     }
    public void ActualizarInventario()
@@ -262,7 +345,7 @@ public class WeaponManager : MonoBehaviour {
         }
       
         WeaponsInInventory.Clear();
-        foreach (Transform t in this.transform)
+        foreach (Transform t in transform.Find("FireWeapon").transform)
         {
             WeaponsInInventory.Add(t.gameObject.GetComponent<WeaponBase>());
         }
@@ -271,9 +354,15 @@ public class WeaponManager : MonoBehaviour {
         foreach (WeaponBase item in WeaponsInInventory)
         {
             item.gameObject.SetActive(false);
+            item.fireLock = false;
         }
-        WeaponsInInventory[0].gameObject.SetActive(true);
-        WeaponbaseCurrent = WeaponsInInventory[0];
+        WeaponsInInventory[CurrenWeaponIndex].gameObject.SetActive(true);
+        WeaponbaseCurrent = WeaponsInInventory[CurrenWeaponIndex];
     }
-   
+
+   IEnumerator actuTemp()
+   {
+       yield return new WaitForEndOfFrame();
+       ActualizarInventario();
+   }
 }

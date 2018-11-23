@@ -89,13 +89,16 @@ public class WeaponBase : MonoBehaviour
     {
         ConfigurationType();
     }
-    void Start()
+  public  virtual void Start()
     {
         isReloading = false;
         animator = GetComponent<Animator>();
         audiosource = GetComponent<AudioSource>();
-        bulletsInClip = clipSize;
-        bulletsLeft = maxAmmo;
+        if (!transform.name.Contains("Clone"))
+        {
+            bulletsInClip = clipSize;
+            bulletsLeft = maxAmmo;
+        }
         Invoke("EnableWeapon", 1f); // pasar a corrutinas 
         AsingConfigurations();
 

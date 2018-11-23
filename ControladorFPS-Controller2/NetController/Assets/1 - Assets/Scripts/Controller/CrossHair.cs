@@ -47,6 +47,7 @@ public class CrossHair : MonoBehaviour
     {
       //  crosshairPreset = preset.none;
         Wbase = this.gameObject.GetComponent<WeaponBase>();
+        recoil = Wbase.RecoilAfect;
     }
 
     void Update()
