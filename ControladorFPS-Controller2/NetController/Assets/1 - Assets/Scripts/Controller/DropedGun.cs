@@ -61,17 +61,20 @@ public class DropedGun : MonoBehaviour {
                         player = item.transform.root.GetComponent<Collider>();
                     }
                 }
-                if (player!=null && player.CompareTag("Player"))
-                {
-                    //Mandamos el mensaje al objeto de que puede cojernos
-                    WeaponManager.instance.GetGunOBJ = transform.root.gameObject;
-                  ui.GetComponent<Image>().color = Color.green;
+                if (player!=null && player.CompareTag("Player") )
+                {// añadimos lista y preguntamos en manager
+                 //Mandamos el mensaje al objeto de que puede cojernos
+                if (!WeaponManager.instance.GetGunOBJ.Contains(this.gameObject)){
+                    WeaponManager.instance.GetGunOBJ.Add(this.gameObject);
+                    ui.GetComponent<Image>().color = Color.green;
                     Debug.Log("Armarecojer");
                 }
-                else
+                
+                }
+                else if(WeaponManager.instance.GetGunOBJ.Contains(this.gameObject))
                 {
-                    WeaponManager.instance.GetGunOBJ =null;
-                    ui.GetComponent<Image>().color = Color.white;
+                WeaponManager.instance.GetGunOBJ.Remove(this.gameObject);
+                ui.GetComponent<Image>().color = Color.white;
                 }
            
         }
@@ -80,7 +83,11 @@ public class DropedGun : MonoBehaviour {
     {
    ui.gameObject.SetActive(false);
         target = null;
-        WeaponManager.instance.GetGunOBJ = null;
+ if (WeaponManager.instance.GetGunOBJ.Contains(this.gameObject))
+        {
+            WeaponManager.instance.GetGunOBJ.Remove(this.gameObject);
+            ui.GetComponent<Image>().color = Color.white;
+        }
     }
     IEnumerator Activate()
     {

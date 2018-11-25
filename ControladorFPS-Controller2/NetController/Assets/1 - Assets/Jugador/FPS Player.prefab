@@ -2021,6 +2021,7 @@ GameObject:
   - component: {fileID: 82363406638632066}
   - component: {fileID: 114841579121635024}
   - component: {fileID: 114827836037283112}
+  - component: {fileID: 114259099567910174}
   m_Layer: 9
   m_Name: Police9mm
   m_TagString: Untagged
@@ -13171,6 +13172,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   value: 0
   TipoMaterial: 5
+--- !u!114 &114259099567910174
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1306732807768902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2b743abd0a4a6241b09b8bcfa919066, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  crosshairPreset: 0
+  recoil: {fileID: 114159705142010708}
+  showCrosshair: 1
+  verticalTexture: {fileID: 2800000, guid: 41b083e2a0f602848bc04db1e1291e63, type: 3}
+  horizontalTexture: {fileID: 2800000, guid: ce260766da3fde64d8d3497009eafe8e, type: 3}
+  cLength: 14
+  cWidth: 11
+  minSpread: 25
+  maxSpread: 120
+  spreadPerSecond: 150
+  rotAngle: 0
+  rotSpeed: 0
+  temp: {fileID: 0}
+  spread: 0
 --- !u!114 &114319249443783364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13590,7 +13616,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1306732807768902}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5d4e1881ea000f4db0ae16d33cbdf6e, type: 3}
   m_Name: 
@@ -13610,7 +13636,7 @@ MonoBehaviour:
   muzzleFlash: {fileID: 198966072283637942}
   bloodFX: {fileID: 198000011254678926, guid: abb9f519b142e304d9c45b56afa768bc, type: 2}
   SprayConf: {fileID: 11400000, guid: 9c866d06ac0ec4348800a2d511ac3836, type: 2}
-  Name: 
+  Name: Police9mm
   BulletsPerShoot: 1
   isPistol: 1
   MarkedShoots: 0
@@ -13634,7 +13660,7 @@ MonoBehaviour:
   maxAmmo: 100
   Playeranim: {fileID: 95795194650528358}
   ShootPoint: {fileID: 1489654436874872}
-  Model: {fileID: 0}
+  Model: {fileID: 1730932928136080, guid: 531847698fa329e499324cdcaa418ee3, type: 2}
   DropedImg: {fileID: 0}
   type: 0
 --- !u!114 &114874847514961922

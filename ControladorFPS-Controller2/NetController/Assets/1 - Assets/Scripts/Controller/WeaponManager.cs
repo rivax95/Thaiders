@@ -30,6 +30,7 @@ public enum Mele { }
 public enum Grenades {Bang,Flash,Toxic }
 #endregion
 public class WeaponManager : MonoBehaviour {
+    //Utilizar eventos y delegados para optimizar esto.
     #region Variables
     public static WeaponManager instance;
     public ObjectInHands Hands = ObjectInHands.fire;
@@ -44,8 +45,9 @@ public class WeaponManager : MonoBehaviour {
     [HideInInspector]
     public bool Switch=false;
     public GameObject dropPoint;
-    public GameObject GetGunOBJ;
+    public List<GameObject>  GetGunOBJ;
     public List<GameObject> Guns;
+    public LayerMask layer;
     #endregion
     #region Inicializadores
     void Awake()
@@ -91,10 +93,9 @@ public class WeaponManager : MonoBehaviour {
             {
                 CheckDrop();
             }
-        if (GetGunOBJ)
-        {
-            CheckGetGun(GetGunOBJ);
-        }
+     
+            CheckGetGun();
+        
         if (transform.Find("FireWeapon").childCount ==0 && Hands != ObjectInHands.grenade)
         {
             Hands = ObjectInHands.mele;
@@ -103,9 +104,22 @@ public class WeaponManager : MonoBehaviour {
     }
     #endregion
     #region Checkers
-    public void CheckGetGun(GameObject gun)
+    public void CheckGetGun()
     {
-
+        RaycastHit hit;
+        GameObject gun=null;
+        if (GetGunOBJ.Count >0) { 
+            if (Physics.SphereCast(this.transform.parent.position,1.5f,transform.forward,out hit, 1.5f,layer))
+            {
+                Debug.Log("Ray");
+                //if (hit.collider.transform.root.gameObject.GetComponent<WeaponBase>())
+                //{
+                    gun = hit.collider.transform.root.gameObject;
+                    Debug.Log(gun.name);
+                //}
+            }
+        }
+        if (gun == null) return;
         GetGun(gun);
     }
     void CheckDrop()
@@ -167,8 +181,15 @@ public class WeaponManager : MonoBehaviour {
             item.gameObject.SetActive(false);
             item.fireLock = false;
         }
-        WeaponsInInventory[CurrenWeaponIndex].gameObject.SetActive(true);
-        WeaponbaseCurrent = WeaponsInInventory[CurrenWeaponIndex];
+
+
+        try
+        {
+            WeaponsInInventory[CurrenWeaponIndex].gameObject.SetActive(true);
+            WeaponbaseCurrent = WeaponsInInventory[CurrenWeaponIndex];
+        }
+        catch { Debug.LogWarning("Un indice ha salido del rango, pero no afecta al sistema"); }
+
     }
     void ChangeGunPerIndex(int index)
     {
@@ -243,8 +264,11 @@ public class WeaponManager : MonoBehaviour {
         }
         //transform.Find(weapons[CurrenWeaponIndex].ToString()).gameObject.SetActive(true);
         WeaponbaseCurrent.OnSwich();
+        try { 
         WeaponsInInventory[CurrenWeaponIndex].gameObject.SetActive(true);
         WeaponbaseCurrent = WeaponsInInventory[CurrenWeaponIndex].gameObject.GetComponent<WeaponBase>();
+        }
+        catch { Debug.LogWarning("Un indice ha salido del rango, pero no afecta al sistema"); }
         WeaponbaseCurrent.AsingConfigurations();
         Switch = false;
     }
@@ -311,7 +335,7 @@ public class WeaponManager : MonoBehaviour {
                     Copia(gun.GetComponent<WeaponBase>(), obj.GetComponent<WeaponBase>());
 
                     //Destuir en networking sin mas
-                    if (buscarArmaFuego(gun.GetComponent<WeaponBase>().Name))
+                    if (buscarArmaFuego(gun.GetComponent<WeaponBase>().Name)) //ME QUEDO AQUIIIIIII
                     {
                         WeaponBase droped = buscarArmaFuego(gun.GetComponent<WeaponBase>().Name); //buscar esto en la lista
 
@@ -319,10 +343,14 @@ public class WeaponManager : MonoBehaviour {
                         dropWeapon(WeaponbaseCurrent);
                     }
                     Destroy(gun);
+                    Hands = ObjectInHands.fire;
+                    OnSwichHandWeapon(Hands);
                     ActualizarInventario();
                     ChangeGunPerIndex(WeaponsInInventory.Count - 1);
+                   GetGunOBJ.Remove(gun);
                     break;
                 }
+                
             }
         }
 
@@ -391,5 +419,10 @@ public class WeaponManager : MonoBehaviour {
        yield return new WaitForEndOfFrame();
        ActualizarInventario();
    }
+    IEnumerator OnSwichHandsCorr(ObjectInHands obj)
+    {
+        yield return new WaitForEndOfFrame();
+        OnSwichHandWeapon(obj);
+    }
     #endregion
 }
