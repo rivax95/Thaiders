@@ -203,6 +203,7 @@ public class WeaponManager : MonoBehaviour {
             }
             CurrenWeaponIndex = index;
             WeaponsInInventory[CurrenWeaponIndex].gameObject.SetActive(true);
+            WeaponbaseCurrent = WeaponsInInventory[CurrenWeaponIndex];
         }
     }
 
@@ -324,7 +325,7 @@ public class WeaponManager : MonoBehaviour {
     }
     public void GetGun(GameObject gun)
     {
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             Debug.Log("furula");
             foreach (var item in Guns)
@@ -348,7 +349,8 @@ public class WeaponManager : MonoBehaviour {
                     ActualizarInventario();
                     ChangeGunPerIndex(WeaponsInInventory.Count - 1);
                    GetGunOBJ.Remove(gun);
-                    break;
+                   WeaponbaseCurrent.gameObject.SetActive(true);
+                 
                 }
                 
             }

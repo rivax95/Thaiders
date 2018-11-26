@@ -85,9 +85,10 @@ public class WeaponBase : MonoBehaviour
     public Sprite DropedImg;
     [HideInInspector]
     public int type;
-    void Awake()
+   public virtual void Awake()
     {
         ConfigurationType();
+        AsingConfigurations();
     }
   public  virtual void Start()
     {
@@ -100,7 +101,7 @@ public class WeaponBase : MonoBehaviour
             bulletsLeft = maxAmmo;
         }
         Invoke("EnableWeapon", 1f); // pasar a corrutinas 
-        AsingConfigurations();
+       
 
     }
     void EnableWeapon()
