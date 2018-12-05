@@ -18,11 +18,7 @@ public class Sniper : WeaponBase
     public override void Start()
     {
         base.Start();
-   
-        CamaraSnip = transform.parent.parent.parent.GetComponent<Camera>();
-        Guncamera = transform.parent.parent.GetComponent<Camera>();
-        Sensi[0] = transform.root.GetComponent<MauseLook>();
-        Sensi[1] = CamaraSnip.transform.GetComponent<MauseLook>();
+        CargaStart();
     }
     protected override void CheckApuntar()
 {
@@ -134,6 +130,15 @@ public class Sniper : WeaponBase
         {
             animator.CrossFadeInFixedTime("FireLast", 0.1f);
         }
+    }
+    public IEnumerator CargaStart()
+    {
+        yield return new WaitForEndOfFrame();
+
+        CamaraSnip = transform.parent.parent.parent.GetComponent<Camera>();
+        Guncamera = transform.parent.parent.GetComponent<Camera>();
+        Sensi[0] = transform.root.GetComponent<MauseLook>();
+        Sensi[1] = CamaraSnip.transform.GetComponent<MauseLook>();
     }
    
 }

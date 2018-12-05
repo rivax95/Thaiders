@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Alex.Controller;
 using System.Linq;
+using Alex.MouseLook;
 #endregion
 #region DeclaracionEnums
 public enum ObjectInHands
@@ -278,8 +279,10 @@ public class WeaponManager : MonoBehaviour {
     {
         //copia.penetration = orig.penetration;
         //copia.minpenetration = orig.minpenetration;
+        copia.TipoDeArma = orig.TipoDeArma;
         copia.RecoilAfect = orig.RecoilAfect;
         copia.SpraySystem = orig.SpraySystem;
+        copia.SprayConf = orig.SprayConf;
         copia.Playeranim = orig.Playeranim;
         copia.ShootPoint = orig.ShootPoint;
         copia.DropedImg = orig.DropedImg;
@@ -289,6 +292,15 @@ public class WeaponManager : MonoBehaviour {
         copia.bulletsLeft = orig.bulletsLeft;
         copia.bulletsInClip = orig.bulletsInClip;
         copia.maxAmmo = orig.maxAmmo;
+        if (orig.TipoDeArma == Tipo.RifleFrancoTirador)
+        {
+            copia.GetComponent<Sniper>().PointOfView= orig.GetComponent<Sniper>().PointOfView;
+            copia.GetComponent<Sniper>().CamaraSnip = this.transform.parent.GetComponent<Camera>();
+            copia.GetComponent<Sniper>().Guncamera = this.transform.GetComponent<Camera>();
+            copia.GetComponent<Sniper>().Sensi = new MauseLook[2];
+            copia.GetComponent<Sniper>().Sensi[0] = this.transform.root.GetComponent<MauseLook>();
+            copia.GetComponent<Sniper>().Sensi[1] = this.transform.parent.GetComponent<MauseLook>();
+        }
     }
     #endregion
     #region ReturnFunctions
@@ -327,16 +339,17 @@ public class WeaponManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log("furula");
+         
             foreach (var item in Guns)
             {
                 if (item.GetComponent<WeaponBase>().Name == gun.GetComponent<WeaponBase>().Name)
                 {
+                    Copia(gun.GetComponent<WeaponBase>(), item.GetComponent<WeaponBase>());
                     GameObject obj = Instantiate(item, this.transform.Find("FireWeapon").transform);
-                    Copia(gun.GetComponent<WeaponBase>(), obj.GetComponent<WeaponBase>());
+                  
 
                     //Destuir en networking sin mas
-                    if (buscarArmaFuego(gun.GetComponent<WeaponBase>().Name)) //ME QUEDO AQUIIIIIII
+                    if (buscarArmaFuego(gun.GetComponent<WeaponBase>().Name)) 
                     {
                         WeaponBase droped = buscarArmaFuego(gun.GetComponent<WeaponBase>().Name); //buscar esto en la lista
 
@@ -362,36 +375,31 @@ public class WeaponManager : MonoBehaviour {
     #region Drop
     public void dropIstantiate(GameObject current)
     {
-        GameObject cube = Instantiate(current.GetComponent<WeaponBase>().Model);
-
-        cube.transform.position = new Vector3(dropPoint.transform.position.x, dropPoint.transform.position.y, dropPoint.transform.position.z + 0.2f);
-        //cube.transform.position = new Vector3(dropPoint.transform.position.x,dropPoint.transform.position.y,transform.position.z*-1);
-        Rigidbody rig = cube.GetComponent<Rigidbody>();
-        rig.mass = 2f;
-        rig.drag = 2f;
-        rig.AddForce(dropPoint.transform.forward * 15, ForceMode.Impulse);
-        cube.transform.Find("Canvas").gameObject.AddComponent<DropedGun>();
-        //cube.transform.localScale = new Vector3(0.1f, 0.2f, 0.1f);
-        // copiamos valores 
-
-        switch (current.GetComponent<WeaponBase>().Name)
+        GameObject cube = new GameObject();
+     
+        cube = Instantiate(current.GetComponent<WeaponBase>().Model);
+        switch (current.GetComponent<WeaponBase>().TipoDeArma)
         {
-            case "Police9mm":
+            case Tipo.Pistola:
                 cube.AddComponent<WeaponBase>().enabled = false; ;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<WeaponBase>());
                 break;
-            case "UMP45":
+            case Tipo.RifleSemiAutomatico:
                 cube.AddComponent<SlideStopWeapon>().enabled = false; ;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<SlideStopWeapon>());
 
                 break;
-            case "DefenderShotgun":
+            case Tipo.Escopeta:
                 cube.AddComponent<Escopeta>().enabled = false;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<Escopeta>());
                 break;
-            case "Sniper":
+            case Tipo.RifleFrancoTirador:
                 cube.AddComponent<Sniper>().enabled = false;
                 Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<Sniper>());
+                break;
+            case Tipo.Rifle:
+                 cube.AddComponent<SlideStopWeapon>().enabled = false; ;
+                Copia(current.GetComponent<WeaponBase>(), cube.GetComponent<SlideStopWeapon>());
                 break;
             default:
                 cube.AddComponent<WeaponBase>().enabled = false; ;
@@ -399,10 +407,22 @@ public class WeaponManager : MonoBehaviour {
                 break;
         }
 
+
+        cube.transform.position = new Vector3(dropPoint.transform.position.x, dropPoint.transform.position.y, dropPoint.transform.position.z + 0.2f);
+        //cube.transform.position = new Vector3(dropPoint.transform.position.x,dropPoint.transform.position.y,transform.position.z*-1);
         //añadimos RB
-        cube.AddComponent<Rigidbody>();
+        if (cube.GetComponent<Rigidbody>() == null)
+        {
+            cube.AddComponent<Rigidbody>();
+        }
         //fuerzas
         cube.GetComponent<Rigidbody>().AddForce(transform.forward * 2, ForceMode.Impulse);
+        Rigidbody rig = cube.GetComponent<Rigidbody>();
+        rig.mass = 2f;
+        rig.drag = 2f;
+        rig.AddForce(dropPoint.transform.forward * 15, ForceMode.Impulse);
+        cube.transform.Find("Canvas").gameObject.AddComponent<DropedGun>();
+       
     }
     void dropWeapon(WeaponBase current)
     {

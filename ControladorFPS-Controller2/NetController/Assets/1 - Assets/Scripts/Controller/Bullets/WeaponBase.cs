@@ -88,7 +88,11 @@ public class WeaponBase : MonoBehaviour
    public virtual void Awake()
     {
         ConfigurationType();
-        AsingConfigurations();
+        if (this.transform.parent != null)
+        {
+            AsingConfigurations();
+        }
+      
     }
   public  virtual void Start()
     {
