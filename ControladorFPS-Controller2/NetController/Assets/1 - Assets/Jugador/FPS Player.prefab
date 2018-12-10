@@ -12092,7 +12092,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294966477
+    m_Bits: 4294964425
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -13356,12 +13356,16 @@ MonoBehaviour:
   GrenadesAvailables: {fileID: 0}
   Switch: 0
   dropPoint: {fileID: 1670355675875596}
-  GetGunOBJ: {fileID: 0}
+  GetGunOBJ:
+  - {fileID: 0}
   Guns:
   - {fileID: 1637153364176706, guid: a049b15dbaadbc04084e3eaff2af0c85, type: 2}
   - {fileID: 1060233862839508, guid: 78dff09b053860c40ae12250b5b65761, type: 2}
   - {fileID: 1344339326894864, guid: 3850aca990f910f49aad348ce7139ba8, type: 2}
   - {fileID: 1034078515268454, guid: f00dd8c10a7f8ec4099ff3672dfd3fba, type: 2}
+  layer:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!114 &114639627617823076
 MonoBehaviour:
   m_ObjectHideFlags: 1

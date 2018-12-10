@@ -6,4 +6,6 @@ public class PlayerInfo : MonoBehaviour {
 
     public string NombreJugador;
     public int Team;
+    public bool InSpawn;
+    public int dinero=1000;
 }

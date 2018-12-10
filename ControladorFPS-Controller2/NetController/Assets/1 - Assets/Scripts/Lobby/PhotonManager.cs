@@ -27,7 +27,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     RoomOptions Options5;
     RoomOptions Options2;
     Scene[] scenes5vs5;
-
+    List<string> FriendsList;
+    public List<FriendInfo> Friends;
     void Awake()
     {
         if (instance == null)
@@ -54,6 +55,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
            
         }
+        FriendsList = new List<string>();
 
     }
 
@@ -61,11 +63,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     void Update()
     {
         totalPlayers = PhotonNetwork.CountOfPlayers;
-        if (!PhotonNetwork.IsConnectedAndReady)
-        {
-            WindowsManager.istance.BloquearLobby();
-            log = PhotonNetwork.LevelLoadingProgress.ToString();
-        }
+        //if (!PhotonNetwork.IsConnectedAndReady && !PhotonNetwork.InRoom)
+        //{
+        //    WindowsManager.istance.BloquearLobby();
+        //    log = PhotonNetwork.LevelLoadingProgress.ToString();
+        //}
 
     }
     public void EstablecerRoomOptions(byte players)
@@ -80,10 +82,23 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         base.OnJoinedLobby();
         Debug.Log("this is lobby");
-        if (PhotonNetwork.IsConnectedAndReady)
+        if (PhotonNetwork.IsConnectedAndReady && PhotonNetwork.InLobby)
         {
             WindowsManager.istance.CloseWindows();
+            WindowsManager.istance.ConectionReady(true);
+            WindowsManager.istance.NewFriendConnection(NickPlayer);
+            string[] friends = FriendsList.ToArray();
+            if (FriendsList.Count > 0 && friends != null)
+            {
+                PhotonNetwork.FindFriends(friends);
+            }
         }
+    }
+    public void MyLoadRoom(Rules rule){
+        if (!PhotonNetwork.IsConnectedAndReady) return;
+        //load rule
+        crearSala(rule.NamePartida);
+        SceneManager.LoadScene(rule.NamePartida, LoadSceneMode.Single);    
     }
     public override void OnConnectedToMaster()
     {
@@ -112,10 +127,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         base.OnDisconnected(cause);
         Debug.Log("Disconect" + cause.ToString());
     }
-    public void crearSala()
+    public void crearSala(string nombre)
     {
 
-        PhotonNetwork.JoinOrCreateRoom("Room", MyOptions, MyLobby);
+        PhotonNetwork.JoinOrCreateRoom("nombre", MyOptions, MyLobby);
     }
     public void SetPlayerName(string value)
     {
@@ -133,6 +148,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public override void OnFriendListUpdate(List<FriendInfo> friendList)
     {
         base.OnFriendListUpdate(friendList);
+        Friends = friendList;
+        foreach (var item in friendList)
+        {
+          
+        }
+        Debug.Log("UpdateFrinds");
     }
     public override void OnJoinedRoom()
     {

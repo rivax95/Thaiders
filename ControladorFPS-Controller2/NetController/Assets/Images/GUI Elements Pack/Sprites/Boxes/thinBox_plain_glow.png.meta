@@ -1,6 +1,7 @@
 fileFormatVersion: 2
 guid: 4da9b20e011e3d54ebf83c637200be7d
-timeCreated: 18446744011573954816
+timeCreated: 1544385554
+licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
   externalObjects: {}
@@ -33,18 +34,18 @@ TextureImporter:
     filterMode: -1
     aniso: -1
     mipBias: -1
-    wrapU: 1
-    wrapV: 1
-    wrapW: -1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
   spriteMode: 1
-  spriteExtrude: 1
+  spriteExtrude: 0
   spriteMeshType: 1
-  alignment: 0
+  alignment: 4
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 9, y: 8, z: 15, w: 7}
   spritePixelsToUnits: 100
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -85,8 +86,23 @@ TextureImporter:
   spriteSheet:
     serializedVersion: 2
     sprites: []
-    outline: []
-    physicsShape: []
+    outline:
+    - - {x: -32.256954, y: 28.884499}
+      - {x: -31.882648, y: -28.381721}
+      - {x: 27.878944, y: -28.256954}
+      - {x: 27.255104, y: 29.383575}
+    physicsShape:
+    - - {x: -29, y: 29}
+      - {x: -31, y: 27}
+      - {x: -31, y: -26}
+      - {x: -28, y: -28}
+      - {x: 21, y: -28}
+      - {x: 26, y: -25}
+      - {x: 26, y: 29}
+    - - {x: -19, y: 18}
+      - {x: 13, y: 18}
+      - {x: 13, y: -16}
+      - {x: -19, y: -16}
   spritePackingTag: 
   userData: 
   assetBundleName: 

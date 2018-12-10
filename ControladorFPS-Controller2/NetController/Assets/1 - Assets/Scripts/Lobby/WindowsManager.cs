@@ -16,13 +16,17 @@ public class WindowsManager : MonoBehaviour {
     public WindowID LobbyBlock;
     public bool BlockLobbyWindows=false;
     public Animator animConection;
+    public GameObject friendListGui;
+    public GameObject chatGui;
+    public GameObject Barra;
     public int idMatch;
     public Text cantPlayers;
     public Text Log;
     public static WindowsManager istance;
     public Button vs5;
     public Button vs2;
-
+    public List<Partida> BotonesPartida;
+    
     void Awake()
     {
         if (istance == null)
@@ -36,6 +40,10 @@ public class WindowsManager : MonoBehaviour {
         vs5.onClick.AddListener(()=>PhotonManager.instance.EstablecerRoomOptions(10));
         vs2.onClick.AddListener(() => PhotonManager.instance.EstablecerRoomOptions(4));
     }
+    void Start()
+    {
+        CloseWindows();
+    }
     void Update()
     {
         //cantPlayers.text = PhotonManager.instance.totalPlayers.ToString() + " Players Only";
@@ -48,32 +56,56 @@ public class WindowsManager : MonoBehaviour {
         ID.Ventana.SetActive(true);
     }
     public void BloquearLobby(){
+        ConectionReady(false);
         CloseWindows();
         LobbyBlock.Ventana.SetActive(true);
         BlockLobbyWindows = true;
     }
    
-    public void NewFriendConnection()
+    public void NewFriendConnection(string name)
     {
+        
         animConection.Rebind();
+        Barra.transform.Find("NombrePerfil").GetComponent<Text>().text = name;
     }
 
     public void OpenFriendList()
     {
-        CloseWindows();
+      //  ResetButtonParitda();
+        if (friendListGui.activeInHierarchy)
+        {
+            friendListGui.SetActive(false);
+        }
+        else
+        {
+            CloseWindows();
+            friendListGui.SetActive(true);
+        }
     }
     public void ReturnToLoggin()
     {
         BloquearLobby();
+     //   ResetButtonParitda();
         //todoo carga escena
         
     }
     public void OpenChat()
     {
-
+       // ResetButtonParitda();
+        if (chatGui.activeInHierarchy)
+        {
+            chatGui.SetActive(false);
+        }
+        else
+        {
+            CloseWindows();
+            chatGui.SetActive(true);
+          
+        }
     }
     public void CloseWindows()
     {
+        ResetButtonParitda();
         foreach (var item in MyWindows)
         {
             item.Ventana.SetActive(false);
@@ -93,5 +125,26 @@ public class WindowsManager : MonoBehaviour {
         WindowID opened = MyWindows.FirstOrDefault(i => i.ID == id);
         opened.abrir();
     }
-    public void OpenJugar() { }
+    public void OpenProfile()
+    {
+
+    }
+    public void LoadDataMysql()
+    {
+
+    }
+    public void ResetButtonParitda()
+    {
+        foreach (var item in BotonesPartida)
+        {
+            item.Ini = false;
+           item.calculateTime = item.restTime;
+          // Debug.Log(item.restTime + " res   calc " + item.calculateTime);
+           item.img.gameObject.SetActive(false);
+        }
+    }
+    public void ConectionReady(bool ready)
+    {
+        Barra.SetActive(ready);
+    }
 }
