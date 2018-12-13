@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using MySql.Data.MySqlClient;
+using TMPro;
 using System;
 using UnityEngine.SceneManagement;
 public class Login : MonoBehaviour
@@ -18,7 +18,8 @@ public class Login : MonoBehaviour
    
     //Variables publicas
     #region PublicVar
- 
+    public string urlRegistro;
+    public string urlLogin;
     public InputField nombre;   //LOGIN
     public InputField contraseña; //LOGIN
     public int MaxNoticesDisplay;
@@ -28,9 +29,12 @@ public class Login : MonoBehaviour
     public Animator canvasAnim;
     public Button notButton;
     public InputField[] InputRegistro;
+     
 
     #region RegistroVar 
     //UI
+    public TextMeshProUGUI MyTEXT;
+    public InputField Nick;
     public InputField NombreRE;
     public InputField Apellido;
     public InputField Dia;
@@ -47,7 +51,7 @@ public class Login : MonoBehaviour
     public Button cancelar;
     public Button aceptar;
     public Button authAceptar;
-    //Alamcenamiento de variablers
+    //Alamcenamiento de variabler
     [HideInInspector]
     public string sNombreRE;
     [HideInInspector]
@@ -68,6 +72,8 @@ public class Login : MonoBehaviour
     public string sPais;
     [HideInInspector]
     public string sMes;
+    [HideInInspector]
+    public string sNick;
     #endregion
 
     #endregion
@@ -92,8 +98,7 @@ public class Login : MonoBehaviour
     }
     public void AceptarRegistro()
     {
-        recojerInformacion();
-        Comprobation();
+        StartCoroutine(registroPHP());
      //   Debug.Log("clico aceptar");
         
     }
@@ -112,14 +117,8 @@ public class Login : MonoBehaviour
             GameObject.Find("MainCanvas").transform.Find("PanelAuthetification").gameObject.SetActive(false);
             string _log = "`usuarios` WHERE `Nombre` LIKE '" + nombre.text +  "'";
             int id=-1;
-            MySqlDataReader res = MYSQLconnection.script.Select(_log);
-            while (res.Read())
-            {
-                id = res.GetInt32(0);
-            }
-            res.Close();
-            MYSQLconnection.script.con.Close();
-            MYSQLconnection.script.AceptarCuenta(id);
+        
+          
             //TODOO CARGAR LOBBY
             //TODOO aceptar cuenta en bd cambiando el valor de aceptar a true
         }
@@ -131,52 +130,7 @@ public class Login : MonoBehaviour
     }
     public void Logear()
     {
-        string _log = "`usuarios` WHERE `Nombre` LIKE '" + nombre.text + "' AND `Contraseña` LIKE '" + contraseña.text + "'";
-
-        MySqlDataReader res = MYSQLconnection.script.Select(_log);
-        Debug.Log(nombre.text + "    " + contraseña.text);
-
-        if (res.HasRows)
-        {
-            res.Close();
-            MYSQLconnection.script.con.Close();
-
-            Debug.Log(" LOGIN CORRECT");
-            MySqlDataReader reader = MYSQLconnection.script.Select("`usuarios`");
-            bool aceptada = false;
-            int AuthentificadorDB=0;
-            while (reader.Read())
-            {
-                aceptada = reader.GetBoolean(14);
-                AuthentificadorDB = reader.GetInt32(13);
-                //Debug.Log("atuhe es" + AuthentificadorDB +" y "+reader.GetName(13));
-            }
-
-            if (aceptada)
-            {
-                //LOGIN CORRECTO PASA AL LOBBY
-                Debug.Log(" LOGIN CORRECT GO TO LOBBY");
-                SceneManager.LoadScene("MainLobby");
-            }
-            else
-            {
-                //ABRE PANEL AUTHETIFICATION
-                Debug.Log(AuthentificadorDB + " login");
-                authAceptar.onClick.AddListener(() => botonAuthe(AuthentificadorDB));
-                GameObject.Find("MainCanvas").transform.Find("PanelAuthetification").gameObject.SetActive(true);
-                Debug.Log("Login abre athetinfication panel");
-
-            }
-            reader.Close();
-            MYSQLconnection.script.con.Close();
-
-        }
-        else
-        {
-            Debug.Log("Incorrecto");
-        }
-        MYSQLconnection.script.con.Close();
-        res.Close();
+        StartCoroutine(LoginPHP());
     }
     public void VisualEffect()
     {
@@ -216,6 +170,10 @@ public class Login : MonoBehaviour
 
 
     #endregion
+    public void Update()
+    {
+        aceptar.interactable = (NombreRE.text.Length > 3 && Apellido.text.Length > 3 && Dia.text.Length >= 1 && año.text.Length > 1 && correo.text.Length > 5&& PasswordRE.text.Length > 5 && Nick.text.Length > 3 && terminos.isOn);
+    }
     //Metodos Privados
     #region PrivateMethods
     public void OcultarPanel()
@@ -238,7 +196,7 @@ public class Login : MonoBehaviour
          prefabNotice = Resources.Load("PrefabNotice") as GameObject;
      }
     void Start () {
-        LoadNotices(MYSQLconnection.script.listaNoticias);
+        //LoadNotices(MYSQLconnection.script.listaNoticias);
      
        // Debug.Log(SystemaDeEnvio.mensaje_error);
 	}
@@ -265,6 +223,64 @@ public class Login : MonoBehaviour
            
         }
     }
+    IEnumerator registroPHP()
+    {
+        recojerInformacion();
+       
+        WWWForm formulario = new WWWForm();
+        formulario.AddField("Nombre",sNombreRE);
+        formulario.AddField("Apellidos",sApellido);
+        formulario.AddField("Nacimiento",sDia+"/"+sMes+"/"+saño);
+        formulario.AddField("Nacionalidad", sPais);
+        formulario.AddField("Nick",sNick);
+        formulario.AddField("Email",sCorreo);
+        formulario.AddField("Password",sPasswordRE);
+        formulario.AddField("Ban",0);
+        WWW www = new WWW(urlRegistro,formulario);
+        yield return www;
+        if (www.text == "0")
+        {
+            MyTEXT.text = "Cuenta creada con exito";
+            
+        }
+        else
+        {
+            MyTEXT.text = www.text;
+        }
+    }
+    IEnumerator LoginPHP()
+    {
+     
+        WWWForm formulario = new WWWForm();
+
+        formulario.AddField("Email", nombre.text);
+        formulario.AddField("Password", contraseña.text);
+
+        WWW www = new WWW(urlLogin, formulario);
+        yield return www;
+        if (www.text[2] != null)
+        {
+            if (www.text[2]=='k')
+            {
+                DBManager.Email = nombre.text;
+                DBManager.Friends = new List<string>(www.text.Split(',')); ;
+                DBManager.Friends.RemoveAt(0);
+                Debug.Log(DBManager.Friends.Count + DBManager.Friends[0]);
+                if (DBManager.LoggedIn)
+                {
+                    Debug.Log("sucesfull");
+                }
+            }
+            else
+            {
+                Debug.Log("User login failed. Error#" + www.text);
+            }
+        }
+        else
+        {
+            Debug.Log("Problema desconocido");
+        }
+    }
     #endregion
 
 
@@ -284,7 +300,7 @@ public class Login : MonoBehaviour
         bPublicidad = publicidad.isOn;
         sPais = pais.options[pais.value].text;
         sMes = mes.options[mes.value].text;
-        
+        sNick = Nick.text;
     }
     public void limpiarDisplay()
     {
@@ -321,13 +337,12 @@ public class Login : MonoBehaviour
       Debug.Log("llego");
       try
       {
-          MYSQLconnection.script.con.Open();
-          MYSQLconnection.script.writingDB(sNombreRE, sPasswordRE, sPais, sApellido, Int32.Parse( sDia), sMes, Int32.Parse(saño), sCorreo, bPublicidad,bTerminos,random);
+        
       }
       catch(Exception ex)
       {
           Debug.Log(ex.Message);
-              MYSQLconnection.script.con.Close();
+            
       }
 
   }

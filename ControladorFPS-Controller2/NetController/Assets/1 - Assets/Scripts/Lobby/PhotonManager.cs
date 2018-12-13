@@ -29,6 +29,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     Scene[] scenes5vs5;
     List<string> FriendsList;
     public List<FriendInfo> Friends;
+    public bool inGroup=false;
+    public bool IsLider=true;
     void Awake()
     {
         if (instance == null)

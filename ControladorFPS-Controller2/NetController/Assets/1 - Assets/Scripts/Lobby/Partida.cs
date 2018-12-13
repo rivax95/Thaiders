@@ -17,10 +17,10 @@ public class Partida : MonoBehaviour {
     public float restTime=5;
     [HideInInspector]
     public float calculateTime;
-    [HideInInspector]
+   // [HideInInspector]
   public   Image img;
      Text time;
-    public void Start()
+    public void Awake()
     {
         calculateTime = restTime;
         img = transform.Find("Fondo").GetChild(0).GetComponent<Image>();
@@ -28,7 +28,7 @@ public class Partida : MonoBehaviour {
     }
     public void Update()
     {
-        if (Ini)
+        if (Ini && PhotonManager.instance.IsLider)
         {
          
             img.gameObject.SetActive(true);
@@ -47,14 +47,17 @@ public class Partida : MonoBehaviour {
     }
     public void Enable()
     {
-        if (Ini == true)
+        if (PhotonManager.instance.IsLider)
         {
-            WindowsManager.istance.ResetButtonParitda();
-        }
-        else
-        {
-            WindowsManager.istance.ResetButtonParitda();
-            Ini = true;
+            if (Ini == true)
+            {
+                WindowsManager.istance.ResetButtonParitda();
+            }
+            else
+            {
+                WindowsManager.istance.ResetButtonParitda();
+                Ini = true;
+            }
         }
         
     }

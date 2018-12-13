@@ -27,7 +27,7 @@ public class SendMail : MonoBehaviour  {
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient();
 
-            mail.From = new MailAddress("proyectodragga@gmail.com", "ZenProject", System.Text.ASCIIEncoding.UTF8);
+            mail.From = new MailAddress("proyectodragga@gmail.com", "RunicProject", System.Text.ASCIIEncoding.UTF8);
             mail.To.Add(destinatario);
             mail.Subject = asunto;
             mail.SubjectEncoding = System.Text.ASCIIEncoding.UTF8;

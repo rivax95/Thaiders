@@ -9,6 +9,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Linq;
 using UnityEngine.UI;
 public class WindowsManager : MonoBehaviour {
@@ -22,11 +23,18 @@ public class WindowsManager : MonoBehaviour {
     public int idMatch;
     public Text cantPlayers;
     public Text Log;
+    public Text FriendsOnline;
     public static WindowsManager istance;
     public Button vs5;
     public Button vs2;
     public List<Partida> BotonesPartida;
-    
+    public GameObject LiderObj;
+    public GameObject FriendMenu;
+    public List<FriendState> MyCustomFrienStates;
+    public List<FriendState> MyCustomFriendsNoAcept;
+ public   GraphicRaycaster m_Raycaster;
+    PointerEventData m_PointerEventData;
+ public   EventSystem m_EventSystem;
     void Awake()
     {
         if (istance == null)
@@ -46,8 +54,40 @@ public class WindowsManager : MonoBehaviour {
     }
     void Update()
     {
-        //cantPlayers.text = PhotonManager.instance.totalPlayers.ToString() + " Players Only";
+        cantPlayers.text = PhotonManager.instance.totalPlayers.ToString() + " Players Online";
         //Log.text = PhotonManager.instance.log;
+        LiderObj.SetActive(PhotonManager.instance.IsLider);
+        //Friend Menu
+
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            //Set up the new Pointer Event
+            m_PointerEventData = new PointerEventData(m_EventSystem);
+            //Set the Pointer Event Position to that of the mouse position
+            m_PointerEventData.position = Input.mousePosition;
+
+            //Create a list of Raycast Results
+            List<RaycastResult> results = new List<RaycastResult>();
+
+            //Raycast using the Graphics Raycaster and mouse click position
+            m_Raycaster.Raycast(m_PointerEventData, results);
+            bool toca=false;
+            //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+            foreach (RaycastResult result in results)
+            {
+                if (result.gameObject.tag == "Menu")
+                {
+                    toca = true;
+                }
+
+            }
+            if (!toca)
+            {
+                MenuFriendList.istance.cerrar();
+                ResetMenuFriendOptions();
+            }
+        }
+     
     }
     public void OpenWindow(WindowID ID)
     {
@@ -89,12 +129,42 @@ public class WindowsManager : MonoBehaviour {
         //todoo carga escena
         
     }
+    public void ResetMenuFriendOptions()
+    {
+        foreach (var item in MyCustomFrienStates)
+        {
+            item.Statebtn = false;
+        }
+    }
+    public void OnClickFriendBar(FriendState state)
+    {
+        
+        //Configure State
+        ResetMenuFriendOptions();
+            if (state.Statebtn) // menu Abierto ((Lo cierras
+            {
+                state.Statebtn = false;
+                MenuFriendList.istance.cerrar();
+                MenuFriendList.istance.Trans.position = state.point.position;
+            }
+            else
+            {
+               
+                state.Statebtn = true;
+                MenuFriendList.istance.Abrir(state.isFriend);
+                MenuFriendList.istance.Trans.position = state.point.position;
+
+            }
+        
+    }
+   
     public void OpenChat()
     {
        // ResetButtonParitda();
         if (chatGui.activeInHierarchy)
         {
             chatGui.SetActive(false);
+            FriendMenu.SetActive(false);
         }
         else
         {
